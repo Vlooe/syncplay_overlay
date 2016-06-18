@@ -1,0 +1,16 @@
+#!/sbin/openrc-run
+
+command="/usr/bin/syncplay-server"
+command_args="--salt $SYNCPLAY_SALT"
+start_stop_daemon_args="-u syncplay:syncplay --background"
+
+depend() {
+	:
+}
+
+stop()
+{
+	ebegin "stopping syncpla-server"
+	killall -u syncplay python2
+	eend $?
+}

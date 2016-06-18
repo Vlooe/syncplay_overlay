@@ -5,7 +5,7 @@
 EAPI=5
 PYTHON_COMPAT=( python2_7 )
 
-inherit distutils-r1 eutils
+inherit distutils-r1 eutils user
 
 DESCRIPTION="Syncplay allows people to enjoy a shared viewing experience even if they are thousands of miles apart."
 
@@ -29,6 +29,12 @@ DEPEND="
 	vlc? ( media-video/vlc )
 "
 
+pkg_setup()
+{
+	enewgroup ${PN} || die "failed"
+	enewuser ${PN} -1 -1 -1 ${PN} -1 || die "failed"
+}
+
 src_compile()
 {
 	return 
@@ -43,4 +49,7 @@ src_install() {
 
 	use client && emake PREFIX="${D}" VLC_SUPPORT="$VLC" install-client || die "failed"
 	use server && emake PREFIX="${D}" VLC_SUPPORT="$VLC" install-server || die "failed"
+
+	doinitd ${FILESDIR}/init.d/*
+	doconfd ${FILESDIR}/conf.d/*
 }
